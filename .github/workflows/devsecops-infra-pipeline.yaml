@@ -1,0 +1,36 @@
+name: devsecops-infra-pipeline
+on: push
+jobs:
+  devsecops-infra:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone the repo
+      uses: actions/checkout@v6
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v4
+      
+    - name: Configure AWS Credentials 2
+      uses: aws-actions/configure-aws-credentials@v6.1.0
+      with:
+        aws-region: ap-south-1
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Verify Terraform Version
+      run: terraform version
+      
+    - name: Run Terraform Init
+      run: terraform init    
+      
+    - name: Run Terraform Format
+      run: terraform fmt
+
+    - name: Run Terraform Validate
+      run: terraform validate
+      
+    - name: Run Terraform Plan
+      run: terraform plan 
+
+    - name: Run Terraform Apply
+      run: terraform apply -auto-approve
